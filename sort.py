@@ -1,65 +1,44 @@
-from random import randint
-import time
-
-def timer(func):
-    def inner(*args, **kwargs):
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        end = time.perf_counter()
-        print(f"Время выполнения {func.__name__} - {end - start} секунд")
-        return result
-
-    return inner
+"""
+Алгоритм делит массив на две половины на каждом уровне рекурсии.
+Это деление продолжается до тех пор, пока не останется подмассивы из одного элемента.
+Количество уровней деления составляет log n, где n — количество элементов в массиве.
+"""
 
 
-def quick_sort(lst: list) -> list:
-    '''
-    Хорошо работает со всеми видами массивов
-    '''
-    if len(lst) <= 1:
-        return lst
-    x = lst[len(lst) // 2]
-    left = [i for i in lst if i < x]
-    middle = [i for i in lst if i == x]
-    right = [i for i in lst if i > x]
-    return main(left) + middle + main(right)
+def merge_sort(arr: list) -> list:
 
-def insertion_sort(lst):
-    '''
-    Работает лучше всего с небольшими массивами
-    '''
-    for i in range(1, len(lst)):
-        key = lst[i]
-        j = i - 1
-        while j >= 0 and key < lst[j]:
-            lst[j + 1] = lst[j]
-            j -= 1
-        lst[j + 1] = key
-    return lst
+    if len(arr) <= 1:
+        return arr
 
-def main(lst: list) -> list:
-    if len(lst) > 100:
-        return quick_sort(lst)
-    else:
-        return insertion_sort(lst)
+    mid = len(arr) // 2
+    left_half = merge_sort(arr[:mid])
+    right_half = merge_sort(arr[mid:])
+
+    return merge(left_half, right_half)
 
 
-if __name__ == '__main__':
-    list_1 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
-    list_2 = [randint(1,100000) for _ in range(1000)]
-    list_3 = list(range(1000000,0,-1))
+def merge(left: int, right:int) -> list:
+    sorted_array = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            sorted_array.append(left[i])
+            i += 1
+        else:
+            sorted_array.append(right[j])
+            j += 1
 
-    start = time.perf_counter()
-    print(main(list_1))
-    end = time.perf_counter()
-    print(f"Время выполнения: {end - start} секунд")
+    while i < len(left):
+        sorted_array.append(left[i])
+        i += 1
 
-    start = time.perf_counter()
-    print(main(list_2))
-    end = time.perf_counter()
-    print(f"Время выполнения: {end - start} секунд")
+    while j < len(right):
+        sorted_array.append(right[j])
+        j += 1
 
-    start = time.perf_counter()
-    print(main(list_3))
-    end = time.perf_counter()
-    print(f"Время выполнения: {end - start} секунд")
+    return sorted_array
+
+if __name__ == "__main__":
+    array = [38, 27, 43, 3, 9, 82, 10]
+    sorted_array = merge_sort(array)
+    print("Отсортированный массив:", sorted_array)
