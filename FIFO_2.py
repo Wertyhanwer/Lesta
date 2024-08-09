@@ -71,7 +71,11 @@ class FIFOQueue:
 
     def __len__(self):
         return self._size
-
+    def __eq__(self, other):
+        if isinstance(other, FIFOQueue):
+            return self.__str__() == other.__str__()
+        else:
+            return NotImplemented
     def __iter__(self):
         current = self._back
         for _ in range(self._size):
